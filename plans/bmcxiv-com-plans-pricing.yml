@@ -1,0 +1,33 @@
+generated: '2026-09-19'
+method: searched
+source: https://breach402.bmcxiv.com/llms.txt
+sources:
+- https://breach402.bmcxiv.com/llms.txt
+- https://breach402.bmcxiv.com/
+- https://breach402.bmcxiv.com/trust.md
+- https://breach402.bmcxiv.com/openapi.json
+provider: BMC XIV
+providerId: bmcxiv-com
+plan_count: 1
+description: >-
+  Breach402 has no tiers, accounts or subscriptions: it is pay-per-call over x402. Everything before the lookup is
+  free (fit assessment, synthetic preview, mailbox verification, payment preparation); one approved exact-email
+  check costs $1.00 USDC settled on Solana mainnet. Prices are quoted verbatim from the provider's own documents;
+  no pricing page exists, so no Pricing link pointer is emitted.
+plans:
+- id: breach402-per-check
+  name: One approved breach check
+  type: usage-based
+  price: '1.00'
+  currency: USDC
+  network: Solana mainnet
+  billing: per call, settled through x402 (HTTP 402 challenge on POST /v1/checks/run)
+  included:
+  - Free: assess_owner_security_need (MCP), preview_synthetic_breach_report (MCP), owner email verification, /v1/checks/prepare
+  - 'Paid ($1.00): one exact verified-email lookup returning the complete records array, cyber-expert and social-engineering analysis, recommended follow-on skills and a next_owner_review date'
+  limits:
+  - one mailbox approval authorizes exactly one lookup (EnrollmentStatus.one_check_only is const true)
+  - each scan requires fresh owner approval and a new payment; automatic or recurring scans are forbidden (trust.md)
+  - report access expires at report_expires_at
+  overage: not applicable
+  quote: '"Price: $1.00 USDC on Solana through x402" — llms.txt'

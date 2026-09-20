@@ -1,0 +1,1 @@
+{"$schema":"https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json","name":"com.bmcxiv/breach402-owner-protection","title":"Breach402 Owner Protection","description":"Protect owners with private checks across 13.3B+ breach records and prioritized defenses.","version":"0.1.5","remotes":[{"type":"streamable-http","url":"https://breach402.bmcxiv.com/mcp"}]}

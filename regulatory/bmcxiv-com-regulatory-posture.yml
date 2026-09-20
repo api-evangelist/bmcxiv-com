@@ -1,0 +1,28 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  live probes of breach402.bmcxiv.com and bmcxiv.com plus the artifacts harvested this run
+  (well-known/bmcxiv-com-well-known.yml, skills/bmcxiv-com-trust-contract.md, lifecycle/bmcxiv-com-lifecycle.yml)
+note: >-
+  Breach402 publishes a machine-first trust contract (trust.md) that states encryption at rest, report expiry,
+  a 180-day A2A dialogue retention period and a revocation right, and an agent card that repeats the retention
+  period — but none of the fourteen horizontal signals this artifact records: no SBOM, support-lifetime
+  statement, accessibility conformance report, AI-transparency page, GPC statement, data-subject-request channel,
+  subprocessor list, data-residency statement, incident-notification SLA, age-assurance, notice-and-action,
+  transparency report or exit-assistance documentation. There is no privacy policy or terms page at all
+  (/privacy and /terms 404 on the API host; the corporate host answers 522). The empty signals set is the
+  measurement. The retention and expiry statements are recorded in lifecycle/ and conventions/, where they belong.
+signals: {}
+probes:
+- {url: 'https://breach402.bmcxiv.com/privacy', status: 404}
+- {url: 'https://breach402.bmcxiv.com/terms', status: 404}
+- {url: 'https://breach402.bmcxiv.com/accessibility', status: 404}
+- {url: 'https://breach402.bmcxiv.com/legal/subprocessors', status: 404}
+- {url: 'https://breach402.bmcxiv.com/legal/dpa', status: 404}
+- {url: 'https://breach402.bmcxiv.com/privacy/requests', status: 404}
+- {url: 'https://breach402.bmcxiv.com/transparency', status: 404}
+- {url: 'https://breach402.bmcxiv.com/trust', status: 404, note: 'the trust contract lives at /trust.md (200), a statement of agent-facing rules, not a trust center with certifications'}
+- {url: 'https://breach402.bmcxiv.com/security/sbom', status: 404}
+- {url: 'https://breach402.bmcxiv.com/ai', status: 404}
+- {url: 'https://breach402.bmcxiv.com/.well-known/security.txt', status: 404}
+- {url: 'https://bmcxiv.com/', status: 522}

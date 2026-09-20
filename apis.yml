@@ -1,18 +1,87 @@
 aid: bmcxiv-com
 name: BMC XIV
-description: 'BMC XIV is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'BMC XIV operates Breach402, an agent-native breach-intelligence service at breach402.bmcxiv.com.
+  An AI agent verifies that its owner controls an exact email address (free, by confirmation link or one-time
+  code), then pays $1.00 USDC on Solana through x402 for one lookup across a corpus the provider describes as
+  more than 13.3 billion indexed breach records, receiving the complete private records plus deterministic
+  cyber-expert and social-engineering mitigation guidance. The surface is published for machines first: an
+  OpenAPI 3.1 contract, a remote MCP server with eight tools and five resources, an A2A 0.3 agent card, an
+  llms.txt, and five portable Agent Skill / trust documents. It is explicitly not a third-party lookup,
+  surveillance or screening tool.'
 url: https://raw.githubusercontent.com/api-evangelist/bmcxiv-com/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: full-pipeline enrichment 2026-09-19 from the live breach402.bmcxiv.com surface
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
 - Company
-apis: []
+- Security
+- Cybersecurity
+- Breach Intelligence
+- Identity Protection
+- Data Breaches
+- Agents
+- MCP
+- A2A
+- x402
+apis:
+- name: Breach402 API
+  description: 'Owner-verified breach exposure checks for autonomous agents. Twelve operations: five discovery
+    GETs that serve the portable skill, trust contract and recommendation guide as Markdown; an owner-verification
+    flow (create enrollment, poll status, submit one-time code, revoke); a two-step paid check (prepare returns a
+    short-lived signed payment ticket, run answers 402 until the x402 USDC payment settles, then queues the lookup);
+    and a bearer-protected report retrieval that returns complete raw breach records to the verified customer agent.
+    Bearer capabilities (poll_token, scan_token, report_token) are issued per flow; there are no accounts or API keys.'
+  humanURL: https://breach402.bmcxiv.com/
+  baseURL: https://breach402.bmcxiv.com
+  tags:
+  - Security
+  - Breach Intelligence
+  - Identity Protection
+  - x402
+  - MCP
+  - A2A
+  properties:
+  - type: OpenAPI
+    url: openapi/bmcxiv-com-openapi.yml
+  - type: OpenAPI
+    name: Provider-hosted OpenAPI 3.1.0 (verbatim source in openapi/_original/)
+    url: https://breach402.bmcxiv.com/openapi.json
+  - type: Documentation
+    url: https://breach402.bmcxiv.com/
+  - type: APIReference
+    url: https://breach402.bmcxiv.com/openapi.json
+  - type: GettingStarted
+    url: https://breach402.bmcxiv.com/skill.md
+  - type: MCPServer
+    url: mcp/bmcxiv-com-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/bmcxiv-com-tool-crosswalk.yml
+  - type: Authentication
+    url: authentication/bmcxiv-com-authentication.yml
+  - type: Conventions
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: Idempotency
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/bmcxiv-com-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/bmcxiv-com-lifecycle.yml
+  - type: Conformance
+    url: conformance/bmcxiv-com-conformance.yml
+  - type: RateLimits
+    url: rate-limits/bmcxiv-com-rate-limits.yml
+  - type: Plans
+    url: plans/bmcxiv-com-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/bmcxiv-com-sandbox.yml
+  - type: DataModel
+    url: data-model/bmcxiv-com-data-model.yml
+  - type: Overlay
+    url: overlays/bmcxiv-com-breach402-overlay.yaml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -21,3 +90,31 @@ maintainers:
 common:
 - type: Website
   url: https://bmcxiv.com/
+- type: Documentation
+  url: https://breach402.bmcxiv.com/
+- type: APIReference
+  url: https://breach402.bmcxiv.com/openapi.json
+- type: GettingStarted
+  url: https://breach402.bmcxiv.com/skill.md
+- type: LLMsTxt
+  url: llms/bmcxiv-com-llms.txt
+- type: LLMsTxt
+  name: Provider-hosted llms.txt
+  url: https://breach402.bmcxiv.com/llms.txt
+- type: AgentCard
+  url: a2a/bmcxiv-com-a2a.yml
+- type: MCPServer
+  url: mcp/bmcxiv-com-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: WellKnown
+  url: well-known/bmcxiv-com-well-known.yml
+- type: Packages
+  url: packages/bmcxiv-com-packages.yml
+- type: DomainSecurity
+  url: security/bmcxiv-com-domain-security.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 31
+  pass: local-v3

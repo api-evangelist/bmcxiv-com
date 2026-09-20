@@ -64,5 +64,10 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-BMC XIV is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://bmcxiv.com/
+BMC XIV operates **Breach402** (breach402.bmcxiv.com), an agent-native, owner-approved breach-exposure check paid per call with USDC over x402. This profile was built from the provider's live surface on 2026-09-19: an OpenAPI 3.1 contract (12 operations), a remote MCP server (8 tools, 5 resources), a conformant A2A 0.3 agent card, an llms.txt and five provider-published skill/trust documents.
+
+- Company: https://bmcxiv.com/ (Cloudflare 522 at profiling time)
+- Product / docs: https://breach402.bmcxiv.com/
+- OpenAPI: https://breach402.bmcxiv.com/openapi.json
+- MCP: https://breach402.bmcxiv.com/mcp
+- Agent card: https://breach402.bmcxiv.com/.well-known/agent-card.json

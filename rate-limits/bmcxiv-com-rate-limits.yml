@@ -1,0 +1,23 @@
+generated: '2026-09-19'
+method: searched
+source: https://breach402.bmcxiv.com/openapi.json
+provider: BMC XIV
+providerId: bmcxiv-com
+limit_count: 0
+description: >-
+  Breach402 declares a 429 response on POST /v1/enrollments (createOwnerEmailVerification) and a 503 "over-capacity"
+  outcome on POST /v1/checks/prepare, but publishes no numeric limits, windows or rate-limit response headers
+  anywhere in the OpenAPI, llms.txt, skill or trust documents. An honest zero: the throttle exists, its size is
+  undocumented.
+headers:
+  request_id: x-request-id     # observed on every response (req_<uuid>)
+  rate_limit: null             # no X-RateLimit-* / RateLimit-* / Retry-After documented or observed
+responseCodes:
+  throttled: 429
+  capacity_exhausted: 503
+limits: []
+structural_limits:
+- one lookup per owner approval (one_check_only const true); a second check needs a new enrollment, approval and payment
+- payment_ticket is bound to one idempotency_key and expires at PreparedCheck.expires_at
+notes:
+- Observed on the unauthenticated 401 response 2026-09-19 — headers cache-control no-store, x-request-id, no rate-limit family.

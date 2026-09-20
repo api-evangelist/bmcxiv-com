@@ -1,0 +1,33 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  openapi/bmcxiv-com-openapi.yml (info.version, paths), the agent card and MCP serverInfo (both version 0.1.5),
+  /healthz, and the provider docs fetched 2026-09-19. No versioning, deprecation, SLA or status page is published.
+versioning:
+  scheme: uri-path
+  current: v1
+  product_version: 0.1.5
+  note: >-
+    /v1/ prefixes every stateful operation; the discovery documents (/skill.md, /trust.md, /openapi.json,
+    /.well-known/*) are unversioned. The same 0.1.5 string appears in the OpenAPI, the agent card, the MCP
+    serverInfo and the mcp-server.json manifest, so the three surfaces are released together. The cyber-expert
+    skill carries its own "Contract version: 1.1.0".
+deprecation:
+  policy_url: null
+  sunset_header: false
+  note: No deprecation policy, Deprecation/Sunset headers or deprecated operations exist.
+sla:
+  url: null
+  note: No SLA is published.
+status_page: null
+health_endpoint:
+  url: https://breach402.bmcxiv.com/healthz
+  observed: '200 {"status":"ok"} on 2026-09-19'
+  note: A liveness endpoint linked from the landing page ("Service health"), not a status page; no StatusPage pointer is emitted.
+data_lifecycle:
+  verification_window: EnrollmentCreated.verification_expires_at (timestamp returned per enrollment; no fixed period is published)
+  scan_token_window: EnrollmentStatus.scan_token_expires_at (per token)
+  payment_ticket_window: PreparedCheck.expires_at ("short-lived signed ticket"; no fixed period is published)
+  report_window: CheckStatus.report_expires_at ("reports are encrypted at rest and expire" — trust.md; no fixed period is published)
+  a2a_dialogue_retention: 'up to 180 days (agent card + skill.md, verbatim: "retained for up to 180 days for service improvement")'
+deprecated_operations: []

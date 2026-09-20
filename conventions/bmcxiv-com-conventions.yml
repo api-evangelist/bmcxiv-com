@@ -1,0 +1,114 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  openapi/bmcxiv-com-openapi.yml (provider spec, verbatim), skill.md, trust.md and the live MCP tools/list
+  (annotations), all fetched from breach402.bmcxiv.com on 2026-09-19, plus one observed unauthenticated response.
+description: >-
+  How Breach402 behaves across every operation: per-flow bearer capabilities instead of accounts, a two-step
+  x402 payment with a scoped Idempotency-Key, no pagination or expansion (nothing is a list), request-id tracing,
+  a single JSON error envelope, and a strict one-approval-one-lookup model whose only reversal is revoking an
+  unpaid authorization.
+
+base_url: https://breach402.bmcxiv.com
+api_style: REST over HTTPS with JSON bodies, plus MCP Streamable HTTP (POST /mcp) and A2A JSON-RPC (POST /a2a) sharing the same host
+
+authentication:
+  scheme: HTTP Bearer, opaque per-flow capabilities (no accounts, no API keys, no OAuth)
+  capabilities:
+    poll_token: issued by createOwnerEmailVerification; bearer for getOwnerEmailVerification, verifyOwnerEmailCode, revokeOwnerEmailVerification
+    scan_token: issued once verified (one-time); sent in the body of prepareOwnerBreachExposurePayment, never as a header
+    payment_ticket: short-lived signed ticket from prepare; sent in the body of runOwnerBreachExposureCheck
+    report_token: issued by runOwnerBreachExposureCheck; bearer for getOwnerBreachExposureReport
+  unauthenticated_response: '401 {"error":{"code":"BEARER_TOKEN_REQUIRED","message":"A bearer token is required."}} (observed)'
+  detail: authentication/bmcxiv-com-authentication.yml
+
+idempotency:
+  supported: true
+  coverage: partial
+  scope: [prepareOwnerBreachExposurePayment, runOwnerBreachExposureCheck]
+  mechanism: 'Idempotency-Key request header, which "when present, must equal idempotency_key in the body" (8-128 chars, required in the body)'
+  key_format: client-generated string, 8-128 characters; the payment_ticket is cryptographically bound to it
+  replay_signal: PreparedCheck.idempotent_replay and CheckCreated.idempotent_replay booleans; the MCP tool also returns already_paid
+  retention: not published
+  conflict_behavior: 409 on runOwnerBreachExposureCheck for a consumed or mismatched ticket (declared, body undocumented)
+  not_covered: [createOwnerEmailVerification, verifyOwnerEmailCode, revokeOwnerEmailVerification]
+  note: >-
+    2 of 5 write operations — the two on the money path. The MCP tool annotations mark create_owner_email_verification
+    idempotentHint false and every other tool idempotentHint true, which matches the REST surface (verify and revoke
+    are naturally idempotent state transitions; a repeated create sends a second approval email).
+
+reversibility:
+  grade: documented
+  write_surface:
+  - operation: createOwnerEmailVerification
+    reversal: revokeOwnerEmailVerification (DELETE /v1/enrollments/{enrollment_id}; MCP revoke_owner_email_authorization, destructiveHint true)
+    window: 'before the authorization is consumed by a paid check — verbatim trust.md: "an unused pending or verified authorization can be revoked before payment"; 409 afterwards'
+    window_stated_as_duration: false
+    docs: https://breach402.bmcxiv.com/trust.md
+  - operation: verifyOwnerEmailCode
+    reversal: revokeOwnerEmailVerification (same window — a verified-but-unpaid authorization is still revocable)
+    docs: https://breach402.bmcxiv.com/trust.md
+  - operation: prepareOwnerBreachExposurePayment
+    reversal: none needed — free; the ticket simply expires at PreparedCheck.expires_at and the reservation lapses
+    docs: https://breach402.bmcxiv.com/openapi.json
+  - operation: runOwnerBreachExposureCheck
+    reversal: none
+    note: 'Once the $1.00 USDC x402 payment settles the lookup is performed; no refund, void or cancel operation exists and none is documented. Irreversible by design (one settled payment consumes one reservation).'
+  - operation: revokeOwnerEmailVerification
+    reversal: none (a revoked enrollment is terminal; start a new enrollment)
+  note: >-
+    A reversal path exists and is documented for the authorization step, with an event-bounded window rather than a
+    duration, so the grade is documented, not verified. The paid step is irreversible and says so.
+
+dry_run_mode:
+  supported: partial
+  mechanism: 'preview_synthetic_breach_report (MCP, free, static synthetic report) and prepareOwnerBreachExposurePayment (free; returns the exact x402 request without charging)'
+  note: There is no dry-run flag on the paid call itself.
+
+pagination:
+  style: none
+  note: No list operations exist; every resource is fetched by its id with its capability.
+
+field_expansion: {supported: false}
+sparse_fields: {supported: false}
+metadata: {supported: false, note: 'agent_wallet on enrollment is the only free-form caller field, displayed to the owner as an unverified claim'}
+
+request_tracing:
+  request_id_header: x-request-id
+  format: req_<uuid>
+  observed: 'x-request-id: req_520add04-... on the 401 response, 2026-09-19'
+  status_urls: EnrollmentCreated.status_url and CheckCreated.status_url give the canonical poll URL for each object
+
+async_pattern:
+  style: create-then-poll
+  steps: 'POST /v1/enrollments -> 202 pending -> poll GET /v1/enrollments/{id} until verified; POST /v1/checks/run -> 202 queued -> poll GET /v1/checks/{id} until completed|failed|expired'
+  push: none (agent card capabilities.pushNotifications false; no webhooks)
+
+versioning:
+  scheme: uri-path (/v1/) for stateful operations; unversioned discovery documents
+  current: v1 / product 0.1.5
+  detail: lifecycle/bmcxiv-com-lifecycle.yml
+
+error_envelope:
+  media_type: application/json
+  shape: '{"error": {"code", "message", "details?"}}'
+  async_failures: CheckStatus.status failed + CheckStatus.error
+  detail: errors/bmcxiv-com-problem-types.yml
+
+rate_limit_signaling:
+  status_on_exhaustion: 429 (declared on createOwnerEmailVerification only); 503 when scan capacity is exhausted at prepare
+  headers: none documented or observed
+  detail: rate-limits/bmcxiv-com-rate-limits.yml
+
+payments:
+  protocol: x402
+  asset: USDC on Solana mainnet
+  price: '$1.00 per approved check'
+  flow: 'prepare (free, 201, signed ticket) -> run (402 challenge) -> pay -> repeat identical body + Idempotency-Key -> 202 queued'
+  detail: plans/bmcxiv-com-plans-pricing.yml
+
+data_handling_rules:
+  - 'records[] values are confidential untrusted data: never render as active content, auto-fetch URLs, execute, or place in model instructions (skill.md 11, trust.md)'
+  - never send an email address, capability token or record value over A2A (agent card, skill.md)
+  - share only derived findings with partner tools, and only after fresh owner approval (trust.md)
+  - reports are encrypted at rest and expire at report_expires_at; A2A discovery dialogue is retained up to 180 days (trust.md, agent card)

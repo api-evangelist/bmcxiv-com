@@ -1,0 +1,57 @@
+generated: '2026-09-19'
+method: probed
+source: https://breach402.bmcxiv.com/.well-known/agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: breach402.bmcxiv.com
+  legacy_path_also_served: /.well-known/agent.json   # identical 3,458-byte body, HTTP 200
+  registry_listing: a2aregistry.org (fetched 2026-09-19; author "BMC XIV", agent "Breach402")
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: 0.3.0
+  preferred_transport: JSONRPC
+  checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+    preferred_transport_present: true
+    default_input_modes_present: true
+    default_output_modes_present: true
+  deviations:
+  - supportedInterfaces-instead-of-additionalInterfaces   # non-standard key carrying the same JSONRPC binding; does not fail a hard check
+card:
+  name: Breach402
+  url: https://breach402.bmcxiv.com/a2a
+  version: 0.1.5
+  provider:
+    organization: BMC XIV
+    url: https://bmcxiv.com
+  documentation_url: https://breach402.bmcxiv.com/openapi.json
+  capabilities: {streaming: false, pushNotifications: false, stateTransitionHistory: false}
+  skills: 5
+  skill_ids: [owner-security-recommendation, synthetic-report-preview, owner-email-breach-check, cyber-expert-analysis, social-engineering-protector]
+  file: bmcxiv-com-agent-card.json
+endpoint_probe:
+  url: https://breach402.bmcxiv.com/a2a
+  request: 'POST JSON-RPC tasks/get {id: ae-probe-nonexistent}'
+  http_status: 400
+  body: '{"jsonrpc":"2.0","id":1,"error":{"code":-32601,"message":"Method not found"}}'
+  note: >-
+    The endpoint is live and speaks JSON-RPC 2.0; tasks/get is not implemented on this server
+    (card capabilities declare no stateTransitionHistory). No message/send was issued because the card
+    states A2A discovery dialogue is retained for up to 180 days.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://breach402.bmcxiv.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  bytes: 3458
+notes:
+- >-
+  The card also points at the MCP endpoint indirectly (documentationUrl is the OpenAPI, whose /mcp path
+  is the Streamable HTTP server) — see mcp/bmcxiv-com-mcp.yml.
+- >-
+  The registrable domain bmcxiv.com and www.bmcxiv.com answered Cloudflare 522 (origin unreachable) on
+  both card paths at fetch time; the card lives only on the breach402 host.

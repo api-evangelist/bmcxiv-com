@@ -1,0 +1,60 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/bmcxiv-com-openapi.yml#/components/schemas (10 schemas) plus the operation paths that link them.
+description: >-
+  Three stateful entities chained by opaque ids and one-time bearer capabilities: an Enrollment (owner mailbox
+  approval) yields a scan_token; preparing a check turns it into a PaymentTicket; paying the ticket creates a Check
+  whose completed state embeds the ExposureReport. Every downstream object is reachable only with the capability
+  minted alongside it.
+entities:
+- name: Enrollment
+  schemas: [CreateEnrollmentRequest, EnrollmentCreated, EnrollmentStatus]
+  id: enrollment_id
+  capability: poll_token (bearer for GET/DELETE/verify)
+  states: [pending, verified, consumed, expired, revoked]
+  key_fields: [email (masked), requested_wallet, verification_expires_at, verified_at, verification_method, one_check_only, scan_token, scan_token_expires_at, price, network]
+  operations: [createOwnerEmailVerification, getOwnerEmailVerification, verifyOwnerEmailCode, revokeOwnerEmailVerification]
+- name: PaymentTicket
+  schemas: [PrepareCheckRequest, PreparedCheck]
+  id: payment_ticket_id
+  capability: payment_ticket (short-lived signed bearer bound to owner, price, network, path and idempotency_key)
+  key_fields: [expires_at, method, url, price, network, asset, headers.Idempotency-Key, body, expected_initial_status, idempotent_replay]
+  operations: [prepareOwnerBreachExposurePayment]
+- name: Check
+  schemas: [RunCheckRequest, CheckCreated, CheckStatus]
+  id: check_id
+  capability: report_token (bearer for GET report)
+  states: [queued, running, completed, failed, expired]
+  key_fields: [created_at, started_at, completed_at, report_expires_at, idempotent_replay, error]
+  operations: [runOwnerBreachExposureCheck, getOwnerBreachExposureReport]
+- name: ExposureReport
+  schemas: [ExposureReport]
+  id: check_id
+  key_fields: [schema_version, checked_at, report_expires_at, subject, provider, result, summary, 'records[]', analysis.cyber_expert, analysis.social_engineering_protector, 'recommended_follow_on_skills[]', next_owner_review]
+  operations: [getOwnerBreachExposureReport]
+relationships:
+- from: Enrollment
+  to: PaymentTicket
+  type: has_one
+  via: scan_token -> PrepareCheckRequest.scan_token
+  note: one_check_only const true
+- from: PaymentTicket
+  to: Check
+  type: has_one
+  via: payment_ticket -> RunCheckRequest.payment_ticket + shared idempotency_key
+- from: Check
+  to: ExposureReport
+  type: has_one
+  via: CheckStatus.report ($ref ExposureReport); ExposureReport.check_id
+- from: ExposureReport
+  to: Enrollment
+  type: belongs_to
+  via: subject.email (the verified owner email)
+  note: subject.type const verified_email_owner
+- from: Check
+  to: Error
+  type: has_one
+  via: 'CheckStatus.error {code, message}'
+  note: async failure channel
+shared_shapes:
+- {schema: Error, used_by: 'all declared 4xx/5xx responses (by convention; the spec declares them without content)'}

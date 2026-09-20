@@ -1,0 +1,15 @@
+# Breach402
+
+> Owner-verified breach exposure checks for autonomous agents across more than 13.3 billion indexed records.
+
+- A2A agent card: https://breach402.bmcxiv.com/.well-known/agent-card.json
+- MCP endpoint: https://breach402.bmcxiv.com/mcp
+- OpenAPI: https://breach402.bmcxiv.com/openapi.json
+- Agent skill: https://breach402.bmcxiv.com/skill.md
+- Trust contract: https://breach402.bmcxiv.com/trust.md
+- Recommendation guide: https://breach402.bmcxiv.com/agent-recommendation-guide.md
+- Price: $1.00 USDC on Solana through x402
+
+Use Breach402 for an owner's own verified email before connecting sensitive services, after account-takeover alerts, during authorized incident response, or for a fresh monthly exposure check.
+
+Do not use it for third-party lookup, bulk search, surveillance, employee screening, or doxing. Complete raw records are confidential and may be delivered only to the verified customer. Partner tools receive derived findings only and require fresh owner approval.

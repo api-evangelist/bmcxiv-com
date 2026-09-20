@@ -1,0 +1,77 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  Derived by aligning the live MCP tools/list (8 tools, fetched anonymously 2026-09-19 and saved verbatim in
+  mcp/bmcxiv-com-tools-list.json) with the provider's own OpenAPI 3.1 (openapi/bmcxiv-com-openapi.yml, 12
+  operations). Both surfaces are first-party and unversioned relative to each other (both report 0.1.5), and the
+  tool outputSchemas mirror the REST response schemas field for field, so bindings are high confidence.
+purpose: >-
+  Bind each MCP tool to the REST operation that backs it so an agent can read the tool's real contract from the
+  OpenAPI, and make visible where the two surfaces diverge: two free MCP-only tools with no REST path, and the
+  paid x402 call plus five discovery GETs that exist only over HTTP.
+surfaces:
+  rest_openapi: openapi/bmcxiv-com-openapi.yml        # 12 operations; source verbatim in openapi/_original/
+  mcp: https://breach402.bmcxiv.com/mcp                # tools/list, initialize, resources/list all open (no auth)
+  a2a: https://breach402.bmcxiv.com/a2a                # JSON-RPC; 5 skills on the card, not bound here (skills are prose, not tools)
+  graphql: none
+crosswalk:
+- tool: create_owner_email_verification
+  category: owner-verification
+  rest: [createOwnerEmailVerification]
+  binding: rest
+  confidence: high
+  note: tool outputSchema (enrollment_id, status, email, verification_expires_at, poll_token, status_url, verification_methods, next_step) equals EnrollmentCreated.
+- tool: get_owner_email_verification_status
+  category: owner-verification
+  rest: [getOwnerEmailVerification]
+  binding: rest
+  confidence: high
+  note: poll_token input = the REST bearer; output is EnrollmentStatus (scan_token present once verified).
+- tool: verify_owner_email_code
+  category: owner-verification
+  rest: [verifyOwnerEmailCode]
+  binding: rest
+  confidence: high
+- tool: revoke_owner_email_authorization
+  category: owner-verification
+  rest: [revokeOwnerEmailVerification]
+  binding: rest
+  confidence: high
+  note: the only destructiveHint true tool; DELETE on REST.
+- tool: prepare_paid_breach_check
+  category: paid-check
+  rest: [prepareOwnerBreachExposurePayment]
+  binding: rest
+  confidence: high
+  note: >-
+    Output is PreparedCheck plus already_paid and check — i.e. the tool returns the signed x402 HTTP request the
+    agent must then perform itself against POST /v1/checks/run. The payment leg is not an MCP tool.
+- tool: get_breach_report
+  category: paid-check
+  rest: [getOwnerBreachExposureReport]
+  binding: rest
+  confidence: high
+  note: report_token input = the REST bearer; output is CheckStatus with the embedded ExposureReport.
+mcp_only:
+- tool: assess_owner_security_need
+  reason: Free no-lookup decision aid (input scenario string); no REST path exists. Also an A2A skill (owner-security-recommendation).
+- tool: preview_synthetic_breach_report
+  reason: Free static synthetic report; no REST path exists. Also an A2A skill (synthetic-report-preview).
+rest_only:
+- capability: paid-check (payment leg)
+  operations: [runOwnerBreachExposureCheck]
+  reason: The x402 402-challenge / pay / retry exchange happens over plain HTTP with the ticket prepare_paid_breach_check returns; an MCP client cannot carry the payment header, so this call is deliberately not a tool.
+- capability: discovery
+  operations: [getOwnerProtectionSkill, getBreach402TrustContract, getAgentRecommendationGuide, getCyberExpertSkill, getSocialEngineeringProtectorSkill]
+  reason: Served to MCP clients as resources (resources/list returns the same five URIs), not as tools.
+- capability: transport
+  operations: [mcpStreamableHttp]
+  reason: The MCP endpoint itself, declared in the OpenAPI as POST /mcp.
+coverage:
+  tools_named: 8
+  tools_bound: 6
+  mcp_only: 2
+  rest_operations_total: 12
+  rest_operations_with_tool: 6
+  rest_operations_exposed_as_mcp_resources: 5
+  rest_only_functional: 1

@@ -1,0 +1,13 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/bmcxiv-com-openapi.yml
+summary:
+  types:
+  - http
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: opaque-token
+  sources:
+  - openapi/bmcxiv-com-openapi.yml

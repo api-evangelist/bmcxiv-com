@@ -1,0 +1,55 @@
+generated: '2026-09-19'
+method: probed
+description: >-
+  Results of probing the closed /.well-known/ path list on every host the record knows: the registrable
+  domain bmcxiv.com and www.bmcxiv.com (both Cloudflare 522 — origin unreachable — on every path at fetch
+  time), and the API/MCP/A2A host breach402.bmcxiv.com (the OpenAPI servers[] host, the MCP endpoint host
+  and the agent-card host are one and the same). breach402 answers a JSON 404 body for unknown paths, so the
+  404s below are real misses, not SPA shells. Real documents served: the A2A agent card (indexed in a2a/),
+  and an MCP registry server manifest at /.well-known/mcp-server.json, saved verbatim. No security.txt,
+  OpenID/OAuth metadata, api-catalog, ai-plugin, UCP/ACP/AAuth or apis.json anywhere.
+hosts:
+- host: https://breach402.bmcxiv.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/oauth-protected-resource/mcp, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/api-catalog.json, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/acp.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/mcp.json, status: 404}
+  - {path: /.well-known/mcp-server.json, status: 200, type: application/json, file: bmcxiv-com-mcp-server.json, note: 'MCP registry server manifest (server.schema 2025-12-11), name com.bmcxiv/breach402-owner-protection, remotes[0] streamable-http https://breach402.bmcxiv.com/mcp'}
+  - {path: /.well-known/agent-card.json, status: 200, type: application/json, file: ../a2a/bmcxiv-com-agent-card.json}
+  - {path: /.well-known/agent.json, status: 200, type: application/json, note: identical body to agent-card.json}
+  - {path: /llms.txt, status: 200, type: text/plain, file: ../llms/bmcxiv-com-llms.txt}
+  - {path: /robots.txt, status: 200, type: text/plain, note: 'User-agent: * / Disallow: / — the provider asks crawlers to stay out while publishing every machine contract at fixed paths'}
+- host: https://bmcxiv.com
+  documents:
+  - {path: /.well-known/security.txt, status: 522}
+  - {path: /.well-known/openid-configuration, status: 522}
+  - {path: /.well-known/oauth-authorization-server, status: 522}
+  - {path: /.well-known/oauth-protected-resource, status: 522}
+  - {path: /.well-known/api-catalog, status: 522}
+  - {path: /.well-known/ai-plugin.json, status: 522}
+  - {path: /.well-known/agent-card.json, status: 522}
+  - {path: /.well-known/agent.json, status: 522}
+- host: https://www.bmcxiv.com
+  documents:
+  - {path: /.well-known/security.txt, status: 522}
+  - {path: /.well-known/openid-configuration, status: 522}
+  - {path: /.well-known/oauth-authorization-server, status: 522}
+  - {path: /.well-known/oauth-protected-resource, status: 522}
+  - {path: /.well-known/api-catalog, status: 522}
+  - {path: /.well-known/ai-plugin.json, status: 522}
+  - {path: /.well-known/agent-card.json, status: 522}
+  - {path: /.well-known/agent.json, status: 522}
+notes:
+- 522 is Cloudflare's "origin connection timed out"; bmcxiv.com is proxied through Cloudflare (ed/leanna.ns.cloudflare.com) but its origin did not answer on 2026-09-19. The provider's own agent card names https://bmcxiv.com as the organization URL, so the pointer is kept and the status recorded.

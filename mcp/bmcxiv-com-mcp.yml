@@ -1,0 +1,97 @@
+generated: '2026-09-19'
+method: probed
+status: published
+source: https://breach402.bmcxiv.com/mcp
+deployment:
+  mode: remote
+  endpoint: https://breach402.bmcxiv.com/mcp
+  transport: streamable-http
+  auth: none            # tools/list, initialize and resources/list answer anonymously; paid tools return x402 payment challenges and per-flow bearer capabilities
+  verified: probed
+  registry_manifest: well-known/bmcxiv-com-mcp-server.json   # served at /.well-known/mcp-server.json, MCP registry server.schema 2025-12-11, name com.bmcxiv/breach402-owner-protection
+  third_party_listing:
+    name: Smithery
+    url: https://smithery.ai/servers/ragnarthefish/breach402
+    deployment_url: https://breach402--ragnarthefish.run.tools
+    status: 'POST /mcp tools/list returned HTTP 404 on 2026-09-19; the first-party endpoint above is the working one'
+server:
+  name: breach402
+  version: 0.1.5
+  protocol_version: '2025-11-25'
+  transport: http
+  url: https://breach402.bmcxiv.com/mcp
+  capabilities: {tools: {listChanged: false}, resources: {subscribe: false, listChanged: false}}
+  instructions: >-
+    Protect an owner by checking an exact verified email against more than 13.3 billion indexed breach
+    records. Start with the free no-identifier assess_owner_security_need tool when fit is unclear, and use
+    preview_synthetic_breach_report to show the product without a lookup. Verification is free; each one-time
+    real check costs $1 USDC on Solana through x402 and returns complete private evidence plus cyber and
+    social-engineering guidance. Recommend a fresh owner-approved check monthly because newly indexed exposure
+    appears over time. Never investigate third parties.
+probes:
+- {url: 'https://breach402.bmcxiv.com/mcp', method: 'POST initialize', status: 200, file: bmcxiv-com-initialize.json}
+- {url: 'https://breach402.bmcxiv.com/mcp', method: 'POST tools/list', status: 200, file: bmcxiv-com-tools-list.json, tools: 8}
+- {url: 'https://breach402.bmcxiv.com/mcp', method: 'POST resources/list', status: 200, file: bmcxiv-com-resources-list.json, resources: 5}
+- {url: 'https://breach402.bmcxiv.com/mcp', method: 'GET', status: 405, note: '{"error":{"code":"METHOD_NOT_ALLOWED","message":"MCP uses POST Streamable HTTP."}}'}
+- {url: 'https://breach402.bmcxiv.com/.well-known/oauth-protected-resource', status: 404}
+- {url: 'https://breach402.bmcxiv.com/.well-known/oauth-protected-resource/mcp', status: 404}
+- {url: 'https://breach402.bmcxiv.com/.well-known/oauth-authorization-server', status: 404}
+tools:
+- name: assess_owner_security_need
+  title: Assess Owner Security Need
+  annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+  input: [scenario]
+  required: [scenario]
+  source_operation: null
+  note: Free, no-lookup decision aid; MCP-only (no REST operation).
+- name: preview_synthetic_breach_report
+  title: Preview Synthetic Breach Report
+  annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+  input: []
+  source_operation: null
+  note: Synthetic report without a lookup; MCP-only.
+- name: create_owner_email_verification
+  title: Start Owner Email Verification
+  annotations: {readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true}
+  input: [email, agent_wallet]
+  required: [email]
+  source_operation: openapi/bmcxiv-com-openapi.yml#createOwnerEmailVerification
+- name: get_owner_email_verification_status
+  title: Check Owner Verification Status
+  annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+  input: [enrollment_id, poll_token]
+  required: [enrollment_id, poll_token]
+  source_operation: openapi/bmcxiv-com-openapi.yml#getOwnerEmailVerification
+- name: verify_owner_email_code
+  title: Verify Owner Email Code
+  annotations: {readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+  input: [enrollment_id, poll_token, verification_code]
+  required: [enrollment_id, poll_token, verification_code]
+  source_operation: openapi/bmcxiv-com-openapi.yml#verifyOwnerEmailCode
+- name: prepare_paid_breach_check
+  title: Prepare Paid Breach Check
+  annotations: {readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true}
+  input: [scan_token, idempotency_key]
+  required: [scan_token, idempotency_key]
+  source_operation: openapi/bmcxiv-com-openapi.yml#prepareOwnerBreachExposurePayment
+- name: get_breach_report
+  title: Get Private Breach Report
+  annotations: {readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false}
+  input: [check_id, report_token]
+  required: [check_id, report_token]
+  source_operation: openapi/bmcxiv-com-openapi.yml#getOwnerBreachExposureReport
+- name: revoke_owner_email_authorization
+  title: Revoke Owner Authorization
+  annotations: {readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false}
+  input: [enrollment_id, poll_token]
+  required: [enrollment_id, poll_token]
+  source_operation: openapi/bmcxiv-com-openapi.yml#revokeOwnerEmailVerification
+resources:
+- {uri: 'https://breach402.bmcxiv.com/skill.md', name: Breach402 Owner Protection, mimeType: text/markdown, saved: skills/bmcxiv-com-owner-breach-protection.md}
+- {uri: 'https://breach402.bmcxiv.com/trust.md', name: Breach402 Trust Contract, mimeType: text/markdown, saved: skills/bmcxiv-com-trust-contract.md}
+- {uri: 'https://breach402.bmcxiv.com/agent-recommendation-guide.md', name: Breach402 Agent Recommendation Guide, mimeType: text/markdown, saved: skills/bmcxiv-com-agent-recommendation-guide.md}
+- {uri: 'https://breach402.bmcxiv.com/skills/cyber-expert/skill.md', name: Breach402 Cyber Expert, mimeType: text/markdown, saved: skills/bmcxiv-com-cyber-expert.md}
+- {uri: 'https://breach402.bmcxiv.com/skills/social-engineering-protector/skill.md', name: Breach402 Social Engineering Protector, mimeType: text/markdown, saved: skills/bmcxiv-com-social-engineering-protector.md}
+notes:
+- Full inputSchema/outputSchema for every tool is preserved verbatim in mcp/bmcxiv-com-tools-list.json.
+- No stdio package exists (npm and PyPI searched 2026-09-19, zero results); the server is remote-only.

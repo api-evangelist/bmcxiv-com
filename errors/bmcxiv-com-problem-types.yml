@@ -1,0 +1,28 @@
+generated: '2026-09-19'
+method: derived
+source: >-
+  4xx/5xx responses declared in openapi/bmcxiv-com-openapi.yml, the Error and CheckStatus.error schemas, and two
+  error bodies observed live on 2026-09-19 (unauthenticated GET /v1/enrollments/{id}; GET /mcp).
+format: json-envelope
+envelope:
+  media_type: application/json
+  shape: '{"error": {"code": "<UPPER_SNAKE>", "message": "<human text>", "details": <any, optional>}}'
+  schema: openapi/bmcxiv-com-openapi.yml#/components/schemas/Error
+  request_id_header: x-request-id   # observed on every response, value req_<uuid>
+  async_errors: >-
+    A failed check surfaces on GET /v1/checks/{check_id} as status: failed with an embedded error {code, message}
+    (CheckStatus.error), not as an HTTP error.
+observed_codes:
+- {code: BEARER_TOKEN_REQUIRED, http: 401, message: 'A bearer token is required.', observed_on: 'GET /v1/enrollments/{enrollment_id} without Authorization', remediation: 'Send the poll_token (enrollment endpoints) or report_token (check endpoint) as Authorization: Bearer.'}
+- {code: METHOD_NOT_ALLOWED, http: 405, message: 'MCP uses POST Streamable HTTP.', observed_on: 'GET /mcp', remediation: 'POST JSON-RPC to /mcp with Accept: application/json, text/event-stream.'}
+declared_responses:
+- {operation: createOwnerEmailVerification, statuses: [400, 429], note: 'The only operation that declares 429; no Retry-After or RateLimit headers are documented.'}
+- {operation: getOwnerEmailVerification, statuses: [404]}
+- {operation: revokeOwnerEmailVerification, statuses: [409], note: '409 when the authorization is no longer revocable (consumed/expired).'}
+- {operation: verifyOwnerEmailCode, statuses: [400, 409], note: 'verification_code must match ^B402-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$.'}
+- {operation: prepareOwnerBreachExposurePayment, statuses: [400, 404, 409, 410, 503], note: 'Per the description: invalid, revoked, expired or over-capacity requests fail here, before any x402 payment is advertised; 410 = expired scan token, 503 = no scan capacity.'}
+- {operation: runOwnerBreachExposureCheck, statuses: [402, 409], note: '402 is the expected first response (x402 payment challenge), not a failure; 409 on a consumed or mismatched ticket.'}
+- {operation: getOwnerBreachExposureReport, statuses: [404, 410], note: '410 once report_expires_at has passed.'}
+- {operation: mcpStreamableHttp, statuses: [], note: 'MCP-level errors travel inside the JSON-RPC envelope (e.g. -32601 Method not found).'}
+notes:
+- The provider does not publish an error-code reference page; codes beyond the two observed are undocumented, and the declared 4xx/5xx responses carry no schema or example body in the spec.

@@ -1,0 +1,31 @@
+generated: '2026-09-19'
+method: searched
+source: https://breach402.bmcxiv.com/trust.md
+sources:
+- https://breach402.bmcxiv.com/trust.md
+- https://breach402.bmcxiv.com/skill.md
+- https://breach402.bmcxiv.com/mcp (tools/list, 2026-09-19)
+description: >-
+  There is no separate sandbox host, test mode or test key prefix. What Breach402 publishes instead is a pair of
+  free, no-identifier MCP tools that let an agent exercise the product before any approval or payment: a decision
+  aid and a synthetic report whose shape matches the paid ExposureReport. Quoted from the provider: "Free
+  evaluation: assess_owner_security_need and preview_synthetic_breach_report perform no lookup and require no
+  identifier or payment." No test values are invented here.
+modes:
+  test_mode: none
+  key_prefixes: none (per-flow bearer capabilities, no API keys)
+free_rehearsal_tools:
+- name: assess_owner_security_need
+  surface: MCP tool
+  input: 'scenario (string; rejects email addresses)'
+  cost: free
+  note: Decision aid — returns whether an owner-approved check is recommended for the described scenario.
+- name: preview_synthetic_breach_report
+  surface: MCP tool
+  input: none
+  cost: free
+  note: 'Returns the complete-record report shape, deterministic defenses, partner handoffs and monthly reminder "without real owner data or a lookup" (agent card skill synthetic-report-preview).'
+free_flow_steps:
+- POST /v1/enrollments (verification email) — free
+- POST /v1/checks/prepare — free; returns the x402 ticket without charging
+test_payments: none published (Solana mainnet only; no devnet/testnet facilitator is documented)

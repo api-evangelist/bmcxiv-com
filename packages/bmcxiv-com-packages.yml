@@ -1,0 +1,19 @@
+generated: '2026-09-19'
+method: searched
+source: >-
+  Registry searches on npm and PyPI plus GitHub repository and user/org checks on 2026-09-19.
+package_count: 0
+official_package_count: 0
+description: >-
+  BMC XIV publishes no client libraries for Breach402. The provider's own llms.txt, landing page and OpenAPI
+  name only protocol surfaces (OpenAPI, MCP Streamable HTTP, A2A JSON-RPC, x402) and no SDK, and no package or
+  source repository under the breach402 / bmcxiv names exists on npm, PyPI or GitHub. The MCP server is remote-only,
+  so there is nothing to npx or pip install. No SDKs pointer is emitted in apis.yml.
+packages: []
+searched:
+- {registry: npm, query: breach402, results: 0, url: 'https://registry.npmjs.org/-/v1/search?text=breach402&size=5'}
+- {registry: pypi, query: breach402, status: 404, url: 'https://pypi.org/pypi/breach402/json'}
+- {registry: github-search, query: breach402, total_count: 0, url: 'https://api.github.com/search/repositories?q=breach402'}
+- {registry: github-user, query: bmcxiv, status: 404}
+- {registry: github-user, query: breach402, status: 404}
+- {registry: github-user, query: ragnarthefish, status: 404, note: the Smithery listing owner handle; no matching GitHub account}
