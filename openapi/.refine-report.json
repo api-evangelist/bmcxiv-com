@@ -1,0 +1,27 @@
+{
+  "provider": "bmcxiv-com",
+  "sources": [
+    "_original/bmcxiv-com-breach402-openapi.json",
+    "bmcxiv-com-openapi.yml"
+  ],
+  "outputs": [
+    "bmcxiv-com-discovery-api-openapi.yml",
+    "bmcxiv-com-owner-verification-api-openapi.yml",
+    "bmcxiv-com-paid-check-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/bmcxiv-com-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "bmcxiv-com-breach402-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "bmcxiv-com-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "tag 'discovery' spans 2 source specs (bmcxiv-com-breach402-openapi.json, bmcxiv-com-openapi.yml): per-path servers applied",
+    "tag 'owner-verification' spans 2 source specs (bmcxiv-com-breach402-openapi.json, bmcxiv-com-openapi.yml): per-path servers applied",
+    "tag 'paid-check' spans 2 source specs (bmcxiv-com-breach402-openapi.json, bmcxiv-com-openapi.yml): per-path servers applied",
+    "apis.yml register: written (+3 apis, 3 total)"
+  ],
+  "skipped": []
+}

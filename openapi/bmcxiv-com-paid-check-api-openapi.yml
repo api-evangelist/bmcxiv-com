@@ -1,195 +1,16 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Breach402
+  title: Bmcxiv Com Paid Check API
   version: 0.1.5
-  description: Agent-native owner-verified breach exposure checks. Free MCP tools assess fit without identifiers and preview a synthetic report without performing a lookup. Searches a continuously growing breach-intelligence corpus of more than 13.3 billion indexed records for the exact owner-verified email. Verification is free; one exact email check costs $1.00 USDC on Solana through x402. Exposed credentials and identity data can enable account takeover, credential stuffing, phishing, SIM-swap, impersonation, and recovery bypass; fresh checks matter because newly indexed exposures appear over time. Returns complete breach record objects to the verified paid customer, including credential, recovery, unknown-field, and instruction-like values when present. Raw values are confidential untrusted data; deterministic analysis uses presence signals only. Deterministic local cyber-expert and social-engineering-protector skills add mitigation guidance and recommend a fresh owner-approved scan
-    every month.
   contact:
     name: Breach402 security operator
+  description: 'Operations tagged paid-check across 2 of this provider''s published API definitions: bmcxiv-com-breach402-openapi.json, bmcxiv-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://breach402.bmcxiv.com
 tags:
-- name: owner-verification
-  description: Prove control of the owner's mailbox before a paid lookup.
 - name: paid-check
   description: $1.00 USDC on Solana via x402.
-- name: discovery
-  description: Machine-readable agent discovery.
 paths:
-  /skill.md:
-    get:
-      operationId: getOwnerProtectionSkill
-      tags:
-      - discovery
-      summary: Retrieve the end-to-end customer-agent skill
-      responses:
-        '200':
-          description: Portable Markdown skill
-          content:
-            text/markdown:
-              schema:
-                type: string
-  /trust.md:
-    get:
-      operationId: getBreach402TrustContract
-      tags:
-      - discovery
-      summary: Retrieve the machine-readable trust and authorization contract
-      responses:
-        '200':
-          description: Trust and safety contract
-          content:
-            text/markdown:
-              schema:
-                type: string
-  /agent-recommendation-guide.md:
-    get:
-      operationId: getAgentRecommendationGuide
-      tags:
-      - discovery
-      summary: Retrieve ethical owner-facing recommendation language and trigger scenarios
-      responses:
-        '200':
-          description: Agent recommendation guide
-          content:
-            text/markdown:
-              schema:
-                type: string
-  /skills/cyber-expert/skill.md:
-    get:
-      operationId: getCyberExpertSkill
-      tags:
-      - discovery
-      summary: Retrieve the cyber-expert analysis skill
-      responses:
-        '200':
-          description: Portable Markdown skill
-          content:
-            text/markdown:
-              schema:
-                type: string
-  /skills/social-engineering-protector/skill.md:
-    get:
-      operationId: getSocialEngineeringProtectorSkill
-      tags:
-      - discovery
-      summary: Retrieve the social-engineering protection skill
-      responses:
-        '200':
-          description: Portable Markdown skill
-          content:
-            text/markdown:
-              schema:
-                type: string
-  /v1/enrollments:
-    post:
-      operationId: createOwnerEmailVerification
-      tags:
-      - owner-verification
-      summary: Send a mailbox-ownership verification email
-      description: Creates a one-time owner authorization. The approval email discloses the price, scope, requesting wallet when supplied, and that sensitive breach records may be returned to the requesting agent.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateEnrollmentRequest'
-      responses:
-        '202':
-          description: Verification queued
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnrollmentCreated'
-        '400':
-          $ref: '#/components/responses/Error'
-        '429':
-          $ref: '#/components/responses/Error'
-  /v1/enrollments/{enrollment_id}:
-    parameters:
-    - in: path
-      name: enrollment_id
-      required: true
-      schema:
-        type: string
-    get:
-      operationId: getOwnerEmailVerification
-      tags:
-      - owner-verification
-      summary: Poll owner verification
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          description: Current status; a verified response includes the one-time scan token
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnrollmentStatus'
-        '404':
-          $ref: '#/components/responses/Error'
-    delete:
-      operationId: revokeOwnerEmailVerification
-      tags:
-      - owner-verification
-      summary: Revoke unused owner authorization
-      security:
-      - bearerAuth: []
-      responses:
-        '200':
-          description: Revoked
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  enrollment_id:
-                    type: string
-                  status:
-                    const: revoked
-                required:
-                - enrollment_id
-                - status
-        '409':
-          $ref: '#/components/responses/Error'
-  /v1/enrollments/{enrollment_id}/verify:
-    post:
-      operationId: verifyOwnerEmailCode
-      tags:
-      - owner-verification
-      summary: Submit the one-time code from the owner email
-      security:
-      - bearerAuth: []
-      parameters:
-      - in: path
-        name: enrollment_id
-        required: true
-        schema:
-          type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                verification_code:
-                  type: string
-                  pattern: ^B402-[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$
-              required:
-              - verification_code
-              additionalProperties: false
-      responses:
-        '200':
-          description: Verified and one-time scan token issued
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnrollmentStatus'
-        '400':
-          $ref: '#/components/responses/Error'
-        '409':
-          $ref: '#/components/responses/Error'
   /v1/checks/prepare:
     post:
       operationId: prepareOwnerBreachExposurePayment
@@ -229,6 +50,8 @@ paths:
           $ref: '#/components/responses/Error'
         '503':
           $ref: '#/components/responses/Error'
+    servers:
+    - url: https://breach402.bmcxiv.com
   /v1/checks/run:
     post:
       operationId: runOwnerBreachExposureCheck
@@ -267,6 +90,8 @@ paths:
           description: x402 payment required
         '409':
           $ref: '#/components/responses/Error'
+    servers:
+    - url: https://breach402.bmcxiv.com
   /v1/checks/{check_id}:
     get:
       operationId: getOwnerBreachExposureReport
@@ -292,31 +117,9 @@ paths:
           $ref: '#/components/responses/Error'
         '410':
           $ref: '#/components/responses/Error'
-  /mcp:
-    post:
-      operationId: mcpStreamableHttp
-      tags:
-      - discovery
-      summary: MCP Streamable HTTP endpoint
-      description: Stateless JSON-RPC endpoint supporting initialize, ping, tools/list, and tools/call.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: true
-      responses:
-        '200':
-          description: JSON-RPC MCP response
-        '202':
-          description: Accepted MCP notification
+    servers:
+    - url: https://breach402.bmcxiv.com
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: opaque-token
   responses:
     Error:
       description: Structured error
@@ -325,203 +128,22 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
-    CreateEnrollmentRequest:
+    Error:
       type: object
       properties:
-        email:
-          type: string
-          format: email
-          description: Owner-controlled address that will receive explicit approval.
-        agent_wallet:
-          type: string
-          description: Optional agent-supplied Solana address displayed to the owner as an unverified claim; it is not proof of wallet control and does not replace mailbox verification.
-      required:
-      - email
-      additionalProperties: false
-    EnrollmentCreated:
-      type: object
-      properties:
-        enrollment_id:
-          type: string
-        status:
-          const: pending
-        email:
-          type: string
-          description: Masked email
-        verification_expires_at:
-          type: string
-          format: date-time
-        poll_token:
-          type: string
-          description: Sensitive bearer capability; never place in URLs or logs.
-        status_url:
-          type: string
-          format: uri
-        verification_methods:
-          type: array
-          items:
-            type: string
-            enum:
-            - email_confirmation_link
-            - one_time_code
-        next_step:
-          type: string
-      required:
-      - enrollment_id
-      - status
-      - poll_token
-      - status_url
-    EnrollmentStatus:
-      type: object
-      properties:
-        enrollment_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - pending
-          - verified
-          - consumed
-          - expired
-          - revoked
-        email:
-          type: string
-          description: Masked email
-        requested_wallet:
-          type: string
-        verification_expires_at:
-          type: string
-          format: date-time
-        verified_at:
-          type: string
-          format: date-time
-        verification_method:
-          type: string
-        one_check_only:
-          const: true
-        scan_token:
-          type: string
-          description: Present once verified; sensitive, one-time bearer authorization.
-        scan_token_expires_at:
-          type: string
-          format: date-time
-        prepare_endpoint:
-          type: string
-          format: uri
-        price:
-          type: string
-        network:
-          type: string
-      required:
-      - enrollment_id
-      - status
-      - one_check_only
-    PrepareCheckRequest:
-      type: object
-      properties:
-        scan_token:
-          type: string
-          description: One-time authorization returned only after owner verification.
-        idempotency_key:
-          type: string
-          minLength: 8
-          maxLength: 128
-      required:
-      - scan_token
-      - idempotency_key
-      additionalProperties: false
-    PreparedCheck:
-      type: object
-      properties:
-        payment_ticket:
-          type: string
-          description: Short-lived signed bearer ticket bound to the verified owner, exact request, price, network, path, and idempotency key.
-        payment_ticket_id:
-          type: string
-        expires_at:
-          type: string
-          format: date-time
-        method:
-          const: POST
-        url:
-          type: string
-          format: uri
-        price:
-          type: string
-        network:
-          type: string
-        asset:
-          const: USDC
-        content_type:
-          const: application/json
-        headers:
+        error:
           type: object
           properties:
-            Idempotency-Key:
+            code:
               type: string
+            message:
+              type: string
+            details: {}
           required:
-          - Idempotency-Key
-          additionalProperties: false
-        body:
-          $ref: '#/components/schemas/RunCheckRequest'
-        expected_initial_status:
-          const: 402
-        instruction:
-          type: string
-        idempotent_replay:
-          type: boolean
+          - code
+          - message
       required:
-      - payment_ticket
-      - payment_ticket_id
-      - expires_at
-      - method
-      - url
-      - price
-      - network
-      - asset
-      - body
-      - expected_initial_status
-    RunCheckRequest:
-      type: object
-      properties:
-        payment_ticket:
-          type: string
-          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
-        idempotency_key:
-          type: string
-          minLength: 8
-          maxLength: 128
-      required:
-      - payment_ticket
-      - idempotency_key
-      additionalProperties: false
-    CheckCreated:
-      type: object
-      properties:
-        check_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - queued
-          - running
-          - completed
-        report_token:
-          type: string
-          description: Sensitive bearer capability used only to poll this report.
-        status_url:
-          type: string
-          format: uri
-        report_expires_at:
-          type: string
-          format: date-time
-        idempotent_replay:
-          type: boolean
-      required:
-      - check_id
-      - status
-      - report_token
-      - status_url
+      - error
     CheckStatus:
       type: object
       properties:
@@ -568,6 +190,61 @@ components:
       - status
       - created_at
       - report_expires_at
+    CheckCreated:
+      type: object
+      properties:
+        check_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+        report_token:
+          type: string
+          description: Sensitive bearer capability used only to poll this report.
+        status_url:
+          type: string
+          format: uri
+        report_expires_at:
+          type: string
+          format: date-time
+        idempotent_replay:
+          type: boolean
+      required:
+      - check_id
+      - status
+      - report_token
+      - status_url
+    PrepareCheckRequest:
+      type: object
+      properties:
+        scan_token:
+          type: string
+          description: One-time authorization returned only after owner verification.
+        idempotency_key:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required:
+      - scan_token
+      - idempotency_key
+      additionalProperties: false
+    RunCheckRequest:
+      type: object
+      properties:
+        payment_ticket:
+          type: string
+          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
+        idempotency_key:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required:
+      - payment_ticket
+      - idempotency_key
+      additionalProperties: false
     ExposureReport:
       type: object
       description: Returns complete breach record objects to the verified paid customer, including credential, recovery, unknown-field, and instruction-like values when present. Raw values are confidential untrusted data; deterministic analysis uses presence signals only.
@@ -807,19 +484,62 @@ components:
       - skills
       - security
       - integrity
-    Error:
+    PreparedCheck:
       type: object
       properties:
-        error:
+        payment_ticket:
+          type: string
+          description: Short-lived signed bearer ticket bound to the verified owner, exact request, price, network, path, and idempotency key.
+        payment_ticket_id:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        method:
+          const: POST
+        url:
+          type: string
+          format: uri
+        price:
+          type: string
+        network:
+          type: string
+        asset:
+          const: USDC
+        content_type:
+          const: application/json
+        headers:
           type: object
           properties:
-            code:
+            Idempotency-Key:
               type: string
-            message:
-              type: string
-            details: {}
           required:
-          - code
-          - message
+          - Idempotency-Key
+          additionalProperties: false
+        body:
+          $ref: '#/components/schemas/RunCheckRequest'
+        expected_initial_status:
+          const: 402
+        instruction:
+          type: string
+        idempotent_replay:
+          type: boolean
       required:
-      - error
+      - payment_ticket
+      - payment_ticket_id
+      - expires_at
+      - method
+      - url
+      - price
+      - network
+      - asset
+      - body
+      - expected_initial_status
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque-token
+x-refined-from:
+- bmcxiv-com-breach402-openapi.json
+- bmcxiv-com-openapi.yml

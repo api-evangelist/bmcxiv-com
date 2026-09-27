@@ -28,36 +28,22 @@ tags:
 - A2A
 - x402
 apis:
-- name: Breach402 API
-  description: 'Owner-verified breach exposure checks for autonomous agents. Twelve operations: five discovery
-    GETs that serve the portable skill, trust contract and recommendation guide as Markdown; an owner-verification
-    flow (create enrollment, poll status, submit one-time code, revoke); a two-step paid check (prepare returns a
-    short-lived signed payment ticket, run answers 402 until the x402 USDC payment settles, then queues the lookup);
-    and a bearer-protected report retrieval that returns complete raw breach records to the verified customer agent.
-    Bearer capabilities (poll_token, scan_token, report_token) are issued per flow; there are no accounts or API keys.'
+- aid: bmcxiv-com:bmcxiv-com-discovery-api
+  name: BMC XIV Discovery API
+  description: Machine-readable agent discovery.
   humanURL: https://breach402.bmcxiv.com/
   baseURL: https://breach402.bmcxiv.com
   tags:
-  - Security
-  - Breach Intelligence
-  - Identity Protection
-  - x402
-  - MCP
-  - A2A
+  - discovery
   properties:
   - type: OpenAPI
-    url: openapi/bmcxiv-com-openapi.yml
-  - type: OpenAPI
-    name: Provider-hosted OpenAPI 3.1.0 (verbatim source in openapi/_original/)
-    url: https://breach402.bmcxiv.com/openapi.json
+    url: openapi/bmcxiv-com-discovery-api-openapi.yml
   - type: Documentation
     url: https://breach402.bmcxiv.com/
   - type: APIReference
     url: https://breach402.bmcxiv.com/openapi.json
   - type: GettingStarted
     url: https://breach402.bmcxiv.com/skill.md
-  - type: MCPServer
-    url: mcp/bmcxiv-com-mcp.yml
   - type: ToolCrosswalk
     url: mcp/bmcxiv-com-tool-crosswalk.yml
   - type: Authentication
@@ -80,14 +66,90 @@ apis:
     url: sandbox/bmcxiv-com-sandbox.yml
   - type: DataModel
     url: data-model/bmcxiv-com-data-model.yml
-  - type: Overlay
-    url: overlays/bmcxiv-com-breach402-overlay.yaml
+- aid: bmcxiv-com:bmcxiv-com-owner-verification-api
+  name: BMC XIV Owner Verification API
+  description: Prove control of the owner's mailbox before a paid lookup.
+  humanURL: https://breach402.bmcxiv.com/
+  baseURL: https://breach402.bmcxiv.com
+  tags:
+  - owner-verification
+  properties:
+  - type: OpenAPI
+    url: openapi/bmcxiv-com-owner-verification-api-openapi.yml
+  - type: Documentation
+    url: https://breach402.bmcxiv.com/
+  - type: APIReference
+    url: https://breach402.bmcxiv.com/openapi.json
+  - type: GettingStarted
+    url: https://breach402.bmcxiv.com/skill.md
+  - type: ToolCrosswalk
+    url: mcp/bmcxiv-com-tool-crosswalk.yml
+  - type: Authentication
+    url: authentication/bmcxiv-com-authentication.yml
+  - type: Conventions
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: Idempotency
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/bmcxiv-com-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/bmcxiv-com-lifecycle.yml
+  - type: Conformance
+    url: conformance/bmcxiv-com-conformance.yml
+  - type: RateLimits
+    url: rate-limits/bmcxiv-com-rate-limits.yml
+  - type: Plans
+    url: plans/bmcxiv-com-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/bmcxiv-com-sandbox.yml
+  - type: DataModel
+    url: data-model/bmcxiv-com-data-model.yml
+- aid: bmcxiv-com:bmcxiv-com-paid-check-api
+  name: BMC XIV Paid Check API
+  description: $1.00 USDC on Solana via x402.
+  humanURL: https://breach402.bmcxiv.com/
+  baseURL: https://breach402.bmcxiv.com
+  tags:
+  - paid-check
+  properties:
+  - type: OpenAPI
+    url: openapi/bmcxiv-com-paid-check-api-openapi.yml
+  - type: Documentation
+    url: https://breach402.bmcxiv.com/
+  - type: APIReference
+    url: https://breach402.bmcxiv.com/openapi.json
+  - type: GettingStarted
+    url: https://breach402.bmcxiv.com/skill.md
+  - type: ToolCrosswalk
+    url: mcp/bmcxiv-com-tool-crosswalk.yml
+  - type: Authentication
+    url: authentication/bmcxiv-com-authentication.yml
+  - type: Conventions
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: Idempotency
+    url: conventions/bmcxiv-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/bmcxiv-com-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/bmcxiv-com-lifecycle.yml
+  - type: Conformance
+    url: conformance/bmcxiv-com-conformance.yml
+  - type: RateLimits
+    url: rate-limits/bmcxiv-com-rate-limits.yml
+  - type: Plans
+    url: plans/bmcxiv-com-plans-pricing.yml
+  - type: Sandbox
+    url: sandbox/bmcxiv-com-sandbox.yml
+  - type: DataModel
+    url: data-model/bmcxiv-com-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/bmcxiv-com-breach402-overlay.yaml
 - type: Website
   url: https://bmcxiv.com/
 - type: Documentation
@@ -118,3 +180,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 31
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://breach402.bmcxiv.com/.well-known/agent-card.json"
+  grade: "conformant"
+  protocol_version: "0.3.0"
+  control: 404
