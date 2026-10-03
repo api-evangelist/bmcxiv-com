@@ -1,10 +1,10 @@
 openapi: 3.2.0
 info:
-  title: Bmcxiv Com Paid Check API
+  title: Breach402 Paid Check API
   version: 0.1.5
+  description: Agent-native owner-verified breach exposure checks.
   contact:
     name: Breach402 security operator
-  description: 'Operations tagged paid-check across 2 of this provider''s published API definitions: bmcxiv-com-breach402-openapi.json, bmcxiv-com-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: https://breach402.bmcxiv.com
 tags:
@@ -50,8 +50,6 @@ paths:
           $ref: '#/components/responses/Error'
         '503':
           $ref: '#/components/responses/Error'
-    servers:
-    - url: https://breach402.bmcxiv.com
   /v1/checks/run:
     post:
       operationId: runOwnerBreachExposureCheck
@@ -90,8 +88,6 @@ paths:
           description: x402 payment required
         '409':
           $ref: '#/components/responses/Error'
-    servers:
-    - url: https://breach402.bmcxiv.com
   /v1/checks/{check_id}:
     get:
       operationId: getOwnerBreachExposureReport
@@ -117,33 +113,49 @@ paths:
           $ref: '#/components/responses/Error'
         '410':
           $ref: '#/components/responses/Error'
-    servers:
-    - url: https://breach402.bmcxiv.com
 components:
-  responses:
-    Error:
-      description: Structured error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    Error:
+    PrepareCheckRequest:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            details: {}
-          required:
-          - code
-          - message
+        scan_token:
+          type: string
+          description: One-time authorization returned only after owner verification.
+        idempotency_key:
+          type: string
+          minLength: 8
+          maxLength: 128
       required:
-      - error
+      - scan_token
+      - idempotency_key
+      additionalProperties: false
+    CheckCreated:
+      type: object
+      properties:
+        check_id:
+          type: string
+        status:
+          type: string
+          enum:
+          - queued
+          - running
+          - completed
+        report_token:
+          type: string
+          description: Sensitive bearer capability used only to poll this report.
+        status_url:
+          type: string
+          format: uri
+        report_expires_at:
+          type: string
+          format: date-time
+        idempotent_replay:
+          type: boolean
+      required:
+      - check_id
+      - status
+      - report_token
+      - status_url
     CheckStatus:
       type: object
       properties:
@@ -190,61 +202,22 @@ components:
       - status
       - created_at
       - report_expires_at
-    CheckCreated:
+    Error:
       type: object
       properties:
-        check_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - queued
-          - running
-          - completed
-        report_token:
-          type: string
-          description: Sensitive bearer capability used only to poll this report.
-        status_url:
-          type: string
-          format: uri
-        report_expires_at:
-          type: string
-          format: date-time
-        idempotent_replay:
-          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details: {}
+          required:
+          - code
+          - message
       required:
-      - check_id
-      - status
-      - report_token
-      - status_url
-    PrepareCheckRequest:
-      type: object
-      properties:
-        scan_token:
-          type: string
-          description: One-time authorization returned only after owner verification.
-        idempotency_key:
-          type: string
-          minLength: 8
-          maxLength: 128
-      required:
-      - scan_token
-      - idempotency_key
-      additionalProperties: false
-    RunCheckRequest:
-      type: object
-      properties:
-        payment_ticket:
-          type: string
-          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
-        idempotency_key:
-          type: string
-          minLength: 8
-          maxLength: 128
-      required:
-      - payment_ticket
-      - idempotency_key
-      additionalProperties: false
+      - error
     ExposureReport:
       type: object
       description: Returns complete breach record objects to the verified paid customer, including credential, recovery, unknown-field, and instruction-like values when present. Raw values are confidential untrusted data; deterministic analysis uses presence signals only.
@@ -535,11 +508,29 @@ components:
       - asset
       - body
       - expected_initial_status
+    RunCheckRequest:
+      type: object
+      properties:
+        payment_ticket:
+          type: string
+          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
+        idempotency_key:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required:
+      - payment_ticket
+      - idempotency_key
+      additionalProperties: false
+  responses:
+    Error:
+      description: Structured error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: opaque-token
-x-refined-from:
-- bmcxiv-com-breach402-openapi.json
-- bmcxiv-com-openapi.yml
