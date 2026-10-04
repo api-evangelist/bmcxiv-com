@@ -34,6 +34,8 @@ apis:
   humanURL: https://breach402.bmcxiv.com/
   baseURL: https://breach402.bmcxiv.com
   tags:
+  - Discovery
+  tags_raw:
   - discovery
   properties:
   - type: OpenAPI
