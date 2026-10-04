@@ -121,27 +121,7 @@ paths:
         '409':
           $ref: '#/components/responses/Error'
 components:
-  responses:
-    Error:
-      description: Structured error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    CreateEnrollmentRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: Owner-controlled address that will receive explicit approval.
-        agent_wallet:
-          type: string
-          description: Optional agent-supplied Solana address displayed to the owner as an unverified claim; it is not proof of wallet control and does not replace mailbox verification.
-      required:
-      - email
-      additionalProperties: false
     EnrollmentStatus:
       type: object
       properties:
@@ -187,22 +167,6 @@ components:
       - enrollment_id
       - status
       - one_check_only
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            details: {}
-          required:
-          - code
-          - message
-      required:
-      - error
     EnrollmentCreated:
       type: object
       properties:
@@ -236,6 +200,42 @@ components:
       - status
       - poll_token
       - status_url
+    CreateEnrollmentRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Owner-controlled address that will receive explicit approval.
+        agent_wallet:
+          type: string
+          description: Optional agent-supplied Solana address displayed to the owner as an unverified claim; it is not proof of wallet control and does not replace mailbox verification.
+      required:
+      - email
+      additionalProperties: false
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details: {}
+          required:
+          - code
+          - message
+      required:
+      - error
+  responses:
+    Error:
+      description: Structured error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     bearerAuth:
       type: http

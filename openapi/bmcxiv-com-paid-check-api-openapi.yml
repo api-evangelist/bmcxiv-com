@@ -129,6 +129,71 @@ components:
       - scan_token
       - idempotency_key
       additionalProperties: false
+    PreparedCheck:
+      type: object
+      properties:
+        payment_ticket:
+          type: string
+          description: Short-lived signed bearer ticket bound to the verified owner, exact request, price, network, path, and idempotency key.
+        payment_ticket_id:
+          type: string
+        expires_at:
+          type: string
+          format: date-time
+        method:
+          const: POST
+        url:
+          type: string
+          format: uri
+        price:
+          type: string
+        network:
+          type: string
+        asset:
+          const: USDC
+        content_type:
+          const: application/json
+        headers:
+          type: object
+          properties:
+            Idempotency-Key:
+              type: string
+          required:
+          - Idempotency-Key
+          additionalProperties: false
+        body:
+          $ref: '#/components/schemas/RunCheckRequest'
+        expected_initial_status:
+          const: 402
+        instruction:
+          type: string
+        idempotent_replay:
+          type: boolean
+      required:
+      - payment_ticket
+      - payment_ticket_id
+      - expires_at
+      - method
+      - url
+      - price
+      - network
+      - asset
+      - body
+      - expected_initial_status
+    RunCheckRequest:
+      type: object
+      properties:
+        payment_ticket:
+          type: string
+          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
+        idempotency_key:
+          type: string
+          minLength: 8
+          maxLength: 128
+      required:
+      - payment_ticket
+      - idempotency_key
+      additionalProperties: false
     CheckCreated:
       type: object
       properties:
@@ -156,52 +221,6 @@ components:
       - status
       - report_token
       - status_url
-    CheckStatus:
-      type: object
-      properties:
-        check_id:
-          type: string
-        status:
-          type: string
-          enum:
-          - queued
-          - running
-          - completed
-          - failed
-          - expired
-        created_at:
-          type: string
-          format: date-time
-        started_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        completed_at:
-          type:
-          - string
-          - 'null'
-          format: date-time
-        report_expires_at:
-          type: string
-          format: date-time
-        report:
-          $ref: '#/components/schemas/ExposureReport'
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-          required:
-          - code
-          - message
-      required:
-      - check_id
-      - status
-      - created_at
-      - report_expires_at
     Error:
       type: object
       properties:
@@ -457,71 +476,52 @@ components:
       - skills
       - security
       - integrity
-    PreparedCheck:
+    CheckStatus:
       type: object
       properties:
-        payment_ticket:
+        check_id:
           type: string
-          description: Short-lived signed bearer ticket bound to the verified owner, exact request, price, network, path, and idempotency key.
-        payment_ticket_id:
+        status:
           type: string
-        expires_at:
+          enum:
+          - queued
+          - running
+          - completed
+          - failed
+          - expired
+        created_at:
           type: string
           format: date-time
-        method:
-          const: POST
-        url:
+        started_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        completed_at:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        report_expires_at:
           type: string
-          format: uri
-        price:
-          type: string
-        network:
-          type: string
-        asset:
-          const: USDC
-        content_type:
-          const: application/json
-        headers:
+          format: date-time
+        report:
+          $ref: '#/components/schemas/ExposureReport'
+        error:
           type: object
           properties:
-            Idempotency-Key:
+            code:
+              type: string
+            message:
               type: string
           required:
-          - Idempotency-Key
-          additionalProperties: false
-        body:
-          $ref: '#/components/schemas/RunCheckRequest'
-        expected_initial_status:
-          const: 402
-        instruction:
-          type: string
-        idempotent_replay:
-          type: boolean
+          - code
+          - message
       required:
-      - payment_ticket
-      - payment_ticket_id
-      - expires_at
-      - method
-      - url
-      - price
-      - network
-      - asset
-      - body
-      - expected_initial_status
-    RunCheckRequest:
-      type: object
-      properties:
-        payment_ticket:
-          type: string
-          description: Signed ticket returned by /v1/checks/prepare. Do not substitute a raw scan token on the paid endpoint.
-        idempotency_key:
-          type: string
-          minLength: 8
-          maxLength: 128
-      required:
-      - payment_ticket
-      - idempotency_key
-      additionalProperties: false
+      - check_id
+      - status
+      - created_at
+      - report_expires_at
   responses:
     Error:
       description: Structured error
