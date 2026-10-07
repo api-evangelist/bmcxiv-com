@@ -150,6 +150,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Pricing
+  url: https://breach402.bmcxiv.com/llms.txt
 - type: Overlay
   url: overlays/bmcxiv-com-breach402-overlay.yaml
 - type: Website
