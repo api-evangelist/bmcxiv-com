@@ -31,3 +31,16 @@ plans:
   - report access expires at report_expires_at
   overage: not applicable
   quote: '"Price: $1.00 USDC on Solana through x402" — llms.txt'
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  units: []
+  plans:
+  - name: One approved breach check
+    access: other
+    model: metered
+    model_how: stated
+    units: []
+    periods: []
