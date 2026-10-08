@@ -150,6 +150,10 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Plans
+  url: plans/bmcxiv-com-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/bmcxiv-com-rate-limits.yml
 - type: Pricing
   url: https://breach402.bmcxiv.com/llms.txt
 - type: Overlay
