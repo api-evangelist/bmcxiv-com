@@ -1,0 +1,11 @@
+[
+  {
+    "repo": "bmcxiv-com",
+    "captured_at": "2026-10-11T183856",
+    "source_url": "https://bmcxiv.com/",
+    "source_type": "Website",
+    "file": "bmcxiv-com-2026-10-11T183856.png",
+    "bytes": 79896,
+    "capture": "playwright-local"
+  }
+]
