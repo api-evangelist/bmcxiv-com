@@ -122,6 +122,68 @@ paths:
           $ref: '#/components/responses/Error'
 components:
   schemas:
+    CreateEnrollmentRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Owner-controlled address that will receive explicit approval.
+        agent_wallet:
+          type: string
+          description: Optional agent-supplied Solana address displayed to the owner as an unverified claim; it is not proof of wallet control and does not replace mailbox verification.
+      required:
+      - email
+      additionalProperties: false
+    EnrollmentCreated:
+      type: object
+      properties:
+        enrollment_id:
+          type: string
+        status:
+          const: pending
+        email:
+          type: string
+          description: Masked email
+        verification_expires_at:
+          type: string
+          format: date-time
+        poll_token:
+          type: string
+          description: Sensitive bearer capability; never place in URLs or logs.
+        status_url:
+          type: string
+          format: uri
+        verification_methods:
+          type: array
+          items:
+            type: string
+            enum:
+            - email_confirmation_link
+            - one_time_code
+        next_step:
+          type: string
+      required:
+      - enrollment_id
+      - status
+      - poll_token
+      - status_url
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details: {}
+          required:
+          - code
+          - message
+      required:
+      - error
     EnrollmentStatus:
       type: object
       properties:
@@ -167,68 +229,6 @@ components:
       - enrollment_id
       - status
       - one_check_only
-    EnrollmentCreated:
-      type: object
-      properties:
-        enrollment_id:
-          type: string
-        status:
-          const: pending
-        email:
-          type: string
-          description: Masked email
-        verification_expires_at:
-          type: string
-          format: date-time
-        poll_token:
-          type: string
-          description: Sensitive bearer capability; never place in URLs or logs.
-        status_url:
-          type: string
-          format: uri
-        verification_methods:
-          type: array
-          items:
-            type: string
-            enum:
-            - email_confirmation_link
-            - one_time_code
-        next_step:
-          type: string
-      required:
-      - enrollment_id
-      - status
-      - poll_token
-      - status_url
-    CreateEnrollmentRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-          description: Owner-controlled address that will receive explicit approval.
-        agent_wallet:
-          type: string
-          description: Optional agent-supplied Solana address displayed to the owner as an unverified claim; it is not proof of wallet control and does not replace mailbox verification.
-      required:
-      - email
-      additionalProperties: false
-    Error:
-      type: object
-      properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-            details: {}
-          required:
-          - code
-          - message
-      required:
-      - error
   responses:
     Error:
       description: Structured error
