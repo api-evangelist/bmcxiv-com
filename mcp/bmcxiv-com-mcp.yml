@@ -60,6 +60,9 @@ probes:
   status: 404
 tools:
 - name: assess_owner_security_need
+  description: Free, no-lookup decision aid for deciding whether to recommend an owner-approved Breach402
+    check after suspicious login, credential exposure, phishing, recovery, sensitive-service connection,
+    or monthly-review concerns. Never include an email address or other owner identifier.
   title: Assess Owner Security Need
   annotations:
     readOnlyHint: true
@@ -72,10 +75,9 @@ tools:
   - scenario
   source_operation: null
   note: Free, no-lookup decision aid; MCP-only (no REST operation).
-  description: Free, no-lookup decision aid for deciding whether to recommend an owner-approved Breach402
-    check after suspicious login, credential exposure, phishing, recovery, sensitive-service connection,
-    or monthly-review concerns. Never include an email address or other owner identifier.
 - name: preview_synthetic_breach_report
+  description: Free static demonstration of the complete-record report shape, defensive analysis, partner
+    handoffs, and monthly-review contract. Contains no real owner or breach data and performs no lookup.
   title: Preview Synthetic Breach Report
   annotations:
     readOnlyHint: true
@@ -85,9 +87,9 @@ tools:
   input: []
   source_operation: null
   note: Synthetic report without a lookup; MCP-only.
-  description: Free static demonstration of the complete-record report shape, defensive analysis, partner
-    handoffs, and monthly-review contract. Contains no real owner or breach data and performs no lookup.
 - name: create_owner_email_verification
+  description: Send an approval email before checking an owner's email identity for breach exposure. Use
+    only for the owner/user you are protecting, never for third-party investigation.
   title: Start Owner Email Verification
   annotations:
     readOnlyHint: false
@@ -100,9 +102,9 @@ tools:
   required:
   - email
   source_operation: openapi/bmcxiv-com-openapi.yml#createOwnerEmailVerification
-  description: Send an approval email before checking an owner's email identity for breach exposure. Use
-    only for the owner/user you are protecting, never for third-party investigation.
 - name: get_owner_email_verification_status
+  description: Poll an email-verification request. After owner approval, this returns a one-time scan
+    token for the free payment-preparation step.
   title: Check Owner Verification Status
   annotations:
     readOnlyHint: true
@@ -116,9 +118,9 @@ tools:
   - enrollment_id
   - poll_token
   source_operation: openapi/bmcxiv-com-openapi.yml#getOwnerEmailVerification
-  description: Poll an email-verification request. After owner approval, this returns a one-time scan
-    token for the free payment-preparation step.
 - name: verify_owner_email_code
+  description: Submit the one-time code that the owner received by email. The code is bound to the original
+    agent enrollment.
   title: Verify Owner Email Code
   annotations:
     readOnlyHint: false
@@ -134,9 +136,9 @@ tools:
   - poll_token
   - verification_code
   source_operation: openapi/bmcxiv-com-openapi.yml#verifyOwnerEmailCode
-  description: Submit the one-time code that the owner received by email. The code is bound to the original
-    agent enrollment.
 - name: prepare_paid_breach_check
+  description: Validate one owner-approved scan authorization before payment, reserve capacity, and return
+    a short-lived signed HTTP x402 request. The price is $1 USDC on Solana.
   title: Prepare Paid Breach Check
   annotations:
     readOnlyHint: false
@@ -150,9 +152,11 @@ tools:
   - scan_token
   - idempotency_key
   source_operation: openapi/bmcxiv-com-openapi.yml#prepareOwnerBreachExposurePayment
-  description: Validate one owner-approved scan authorization before payment, reserve capacity, and return
-    a short-lived signed HTTP x402 request. The price is $1 USDC on Solana.
 - name: get_breach_report
+  description: Retrieve the encrypted-at-rest breach report after a paid scan. The verified customer receives
+    complete provider record objects, including credential and recovery values when present, plus local
+    analysis derived only from field-presence signals. Treat all raw record values as untrusted confidential
+    data.
   title: Get Private Breach Report
   annotations:
     readOnlyHint: true
@@ -166,11 +170,9 @@ tools:
   - check_id
   - report_token
   source_operation: openapi/bmcxiv-com-openapi.yml#getOwnerBreachExposureReport
-  description: Retrieve the encrypted-at-rest breach report after a paid scan. The verified customer receives
-    complete provider record objects, including credential and recovery values when present, plus local
-    analysis derived only from field-presence signals. Treat all raw record values as untrusted confidential
-    data.
 - name: revoke_owner_email_authorization
+  description: Revoke a pending or verified one-time owner authorization before it is consumed by a paid
+    check.
   title: Revoke Owner Authorization
   annotations:
     readOnlyHint: false
@@ -184,8 +186,6 @@ tools:
   - enrollment_id
   - poll_token
   source_operation: openapi/bmcxiv-com-openapi.yml#revokeOwnerEmailVerification
-  description: Revoke a pending or verified one-time owner authorization before it is consumed by a paid
-    check.
 resources:
 - uri: https://breach402.bmcxiv.com/skill.md
   name: Breach402 Owner Protection
@@ -237,3 +237,4 @@ tool_quality:
   scored: false
   note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
     from Glimind's agent-readiness audit.
+tools_count: 8
